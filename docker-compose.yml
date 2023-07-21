@@ -1,0 +1,95 @@
+version: "3.9"
+services:
+  doojoe-shared-base:
+    build:
+      context: ./
+      dockerfile: ./build/local-shared-base/Dockerfile
+    image: local:doojoe-shared-base
+  identity-doojoe-com:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 5
+        max-size: 10m
+    build:
+      context: ./
+      dockerfile: ./src/++Identity/DooJoe.Identity/src/DooJoe.Identity.STS.Identity/Dockerfile
+    ports:
+      - "44310:44310"
+    depends_on:
+      - doojoe-shared-base
+    environment:
+      - VIRTUAL_HOST=identity.doojoe.com:44310
+      - 'AdminConfiguration__IdentityAdminBaseUrl=https://identity.doojoe.com'
+      - 'AdvancedConfiguration__IssuerUri=https://identity.doojoe.com'
+      - DockerConfiguration__UpdateCaCertificate=true
+      - ASPNETCORE_ENVIRONMENT=Development
+  account-api-doojoe-com:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 5
+        max-size: 10m
+    build:
+      context: ./
+      dockerfile: ./src/+Modules/Required/AccountModule/+API/+AccountModuleApi/src/Dockerfile
+    ports:
+      - "5240:5240"
+    depends_on:
+      - doojoe-shared-base
+      - identity-doojoe-com
+  dojosurveys-api-doojoe-com:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 5
+        max-size: 10m
+    build:
+      context: ./                    
+      dockerfile: ./src/+Modules/Lazy/DojoSurveyModule/+Api/+DojoSurveysApi/src/Dockerfile
+    ports:
+      - "5250:5250"
+    depends_on:
+      - doojoe-shared-base
+      - identity-doojoe-com
+  doojoe-blazor-client:
+    container_name: doojoe-blazor-client
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 5
+        max-size: 10m
+    build:
+      context: ./
+      dockerfile: ./src/UI/Client/DooJoe.BlazorClient/src/Dockerfile
+    ports:
+      - "5020:5020"
+      - "5021:5021"
+    depends_on:
+      - doojoe-shared-base
+      - identity-doojoe-com
+      - account-api-doojoe-com
+      - dojosurveys-api-doojoe-com
+  doojoe-blazor-reverse-proxy:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 5
+        max-size: 10m
+    build:
+      context: ./
+      dockerfile: ./build/local-reverse-proxy/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - doojoe-shared-base
+      - identity-doojoe-com
+      - account-api-doojoe-com
+      - dojosurveys-api-doojoe-com
+      - doojoe-blazor-client

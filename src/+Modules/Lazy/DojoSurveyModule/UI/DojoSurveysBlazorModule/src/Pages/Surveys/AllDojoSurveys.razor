@@ -1,0 +1,51 @@
+@page "/dojosurveys/alldojosurveys"
+
+@inject IStringLocalizer<AllDojoSurveys> Localize
+
+<div>
+    <MudText Typo="Typo.h4" Style="text-wrap: balance;">The DooJoe - All DojoSurveys</MudText>
+    <MudButton Href="/dojosurveys/newsurvey" Class="mt-4" Color="Color.Primary" Variant="Variant.Filled" FullWidth="true">New Survey</MudButton>
+    <MudDivider />
+    <MudGrid Class="my-2 px-2">
+        @foreach (var dojoSurvey in _dojoSurveys)
+        {
+            <MudItem xs="12" sm="6" lg="3">
+                <MudCard Class="pa-4 d-flex flex-column justify-space-between" Style="height: 300px; min-height: 300px; max-height: 300px;">
+                    <MudCardHeader Class="overflow-y-hidden">
+                        <MudText Typo="Typo.h5"><span class="mud-primary-text">Title:</span> @dojoSurvey.Title</MudText>
+                    </MudCardHeader>
+                    <MudCardContent Class="overflow-y-auto">
+                        <MudText Typo="Typo.body2" Class="mb-2"><span class="mud-primary-text">Description:</span> @dojoSurvey.Description</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButtonGroup VerticalAlign="false" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary">
+                            <ViewSurveyButtonComponent DojoSurveyId="@dojoSurvey.Id" />
+                            <MudButton OnClick="() => NavigateToEditDojoSurvey(dojoSurvey.Id.ToString())">Edit Survey</MudButton>
+                            <MudButton>Copy Survey</MudButton>
+                            <MudButton>Delete Survey</MudButton>
+                        </MudButtonGroup>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+</div>
+
+@code {
+    private List<DojoSurveyViewModel> _dojoSurveys = new();
+    [Parameter]
+    public EventCallback<DojoSurveyViewModel> OnChosenDojoSurvey { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();                     
+        var request = new DojoSurveysGetAllRequest();
+        _dojoSurveys = await DojoSurveysDataService.DojoSurveysGetAllAsync(request);
+    }
+
+    protected async Task NavigateToEditDojoSurvey(string dojoSurveyId)
+    {
+        NavigationManager.NavigateTo($"/dojoSurveys/editsurvey/{dojoSurveyId}");
+    }
+
+}

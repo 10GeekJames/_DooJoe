@@ -1,0 +1,28 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- DojoSurveyModule -->
+  <!-- <Choose>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <ItemGroup>
+        <PackageReference Include="DojoSurveysCore" />
+        <PackageReference Include="DojoSurveysInfrastructure" />
+        <PackageReference Include="DojoSurveysApplication" />
+        <PackageReference Include="DojoSurveysBlazorModule" />
+      </ItemGroup>
+    </When>
+  </Choose> -->
+
+  <ItemGroup>
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/____Core/DojoSurveysCore.DojoSurveysTestData/src/DojoSurveysCore.DojoSurveysTestData.csproj" />
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/___Infrastructure/DojoSurveysInfrastructure/src/DojoSurveysInfrastructure.csproj" />    
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/_Application/_DojoSurveysApplication.Shared/src/DojoSurveysApplication.Shared.csproj" />
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/UI/_DojoSurveysModuleClientServiceLoader/src/DojoSurveysModuleClientServiceLoader.csproj" />
+    
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/UI/DojoSurveysBlazorModule/src/DojoSurveysBlazorModule.csproj" />      
+    <BlazorWebAssemblyLazyLoad Include="DojoSurveysBlazorModule.dll" />
+
+    <ProjectReference Include="./../../../../+Modules/Lazy/DojoSurveyModule/UI/DojoSurveysBlazorModuleAdmin/src/DojoSurveysBlazorModuleAdmin.csproj" />      
+    <BlazorWebAssemblyLazyLoad Include="DojoSurveysBlazorModuleAdmin.dll" />
+  </ItemGroup>
+
+  <!-- /DojoSurveyModule -->  
+</Project>

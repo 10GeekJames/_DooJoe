@@ -1,0 +1,58 @@
+@inject IStringLocalizer<MultiChoice> Localize
+
+<MudField Label="New Multi-Choice Question" Class="mt-4" Variant="Variant.Outlined" DisableUnderLine="true">
+    <MudGrid>
+        <MudItem xs="12" sm="4" md="6">
+            <MudTextField @bind-Value="_newQuestion.Title" Label="Question Text" />
+        </MudItem>
+        <MudItem xs="12" sm="4" md="3">
+            <MudTextField @bind-Value="_newQuestion.Section" Label="Question Section" />
+        </MudItem>
+        <MudItem xs="12" sm="4" md="3">
+            <MudTextField @bind-Value="_newQuestion.AllowedAnswerCount" Label="Answer Count" />
+        </MudItem>
+    </MudGrid>
+</MudField>
+<NewSurveyQuestionAnswer OnSave=SaveAnswer />
+<MudField Label="Possible Answers" Variant="Variant.Outlined" DisableUnderLine="true" Class="mt-8">
+    @foreach(var answer in _newQuestion.DojoSurveyQuestionAnswers)
+    {
+        <div>
+            <MudButton Variant="Variant.Filled" Class="mr-2" EndIcon="@Icons.Material.Filled.DeleteForever" aria-label="edit" OnClick="() => _deleteAnswerToConfirm = answer.Content" >@answer.Content</MudButton>
+            @if(_deleteAnswerToConfirm == answer.Content)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small" aria-label="delete" OnClick="() => DeleteAnswer(answer)">Confirm Delete</MudButton>
+            }
+        </div>
+    }
+</MudField>
+<MudButton Class="mt-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" FullWidth="true">
+    Add Question
+</MudButton>
+
+@code {
+    [Parameter]
+    public EventCallback<DojoSurveyQuestionViewModel> OnSave { get; set; }
+    private DojoSurveyQuestionViewModel _newQuestion = new() { DojoQuestionType = DojoSurveyQuestionTypesEnum.MultiChoice };   
+    private string _deleteAnswerToConfirm = "";
+
+    private async Task Save()
+    {
+        await OnSave.InvokeAsync(_newQuestion);
+        _newQuestion=new();
+    }
+
+    private async Task SaveAnswer(DojoSurveyQuestionAnswerViewModel answer)
+    {
+        if(!_newQuestion.DojoSurveyQuestionAnswers.Any(rs=>rs.Content == answer.Content))
+        {
+            _newQuestion.DojoSurveyQuestionAnswers.Add(answer);    
+        }        
+    }
+
+    private void DeleteAnswer(DojoSurveyQuestionAnswerViewModel answer)
+    {
+        _newQuestion.DojoSurveyQuestionAnswers.Remove(_newQuestion.DojoSurveyQuestionAnswers.First( rs => rs.Content == answer.Content));
+        
+    }
+}

@@ -1,0 +1,31 @@
+@inject IStringLocalizer<FrequencyComponent> Localize
+<MudField Class="mt-4" Label="Frequency Settings" Variant="Variant.Outlined">
+    <MudSelect T="string" Label="Interval">
+        <MudSelectItem Value="@("Weekly")" />
+        <MudSelectItem Value="@("Monthly")" />
+        <MudSelectItem Value="@("Quarterly")" />
+    </MudSelect>
+    <MudStack Row="true" AlignItems="AlignItems.End">
+        <MudTimePicker Label="Start Time" AmPm="true" @bind-Time="StartTime" />
+
+        <MudText>to</MudText>
+
+        <MudTimePicker Label="End Time" AmPm="true" @bind-Time="EndTime" />
+    </MudStack>
+    <MudTextField Label="Custom Formula" @bind-Value="CustomFormula" />
+</MudField>
+
+@code {
+    DateTime? StartDate = DateTime.Today;
+    DateTime? EndDate = DateTime.Today;
+    TimeSpan? StartTime = new TimeSpan(00, 45, 00);
+    TimeSpan? EndTime = new TimeSpan(00, 45, 00);
+    public string SelectedAnswer {get;set;} = string.Empty;
+    public string CustomFormula {get;set;} = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+} 

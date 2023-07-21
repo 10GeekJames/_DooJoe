@@ -1,0 +1,85 @@
+﻿@inherits LayoutComponentBase
+
+<MudLayout>
+    <CascadingAuthenticationState>
+        <CascadingValue Value="@RoomName" Name="roomName">
+            <MudAppBar Elevation="1" Dense="true" Fixed="true">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                    OnClick="@((e) => DrawerToggle())" />
+                <MudSpacer />
+                <span>Toggle @(PlatformStateCacheService.IsDarkMode ? "Light Mode" : "Dark Mode")</span>
+                <MudToggleIconButton @bind-Toggled="@PlatformStateCacheService.IsDarkMode" Icon="@Icons.Material.Filled.DarkMode" Color="@Color.Info"
+                    Title="Dark Mode" ToggledIcon="@Icons.Material.Filled.LightMode" ToggledColor="Color.Warning"
+                    ToggledTitle="Light Mode" />
+
+                <NavMenuLogIn />
+                
+            </MudAppBar>
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" DisableOverlay="true" Elevation="2"
+                    Variant="@DrawerVariant.Mini">
+                    <NavMenu />
+                </MudDrawer>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" DisableOverlay="true" Elevation="2"
+                    Variant="@DrawerVariant.Temporary">
+                    <NavMenu />
+                </MudDrawer>
+            </MudHidden>
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pl-0 pr-0 pr-md-4 pl-md-4">
+                    <Breadcrumb />
+                    @Body
+                    <ModuleNav />
+                    <ModuleSettings />
+                </MudContainer>
+            </MudMainContent>
+        </CascadingValue>
+    </CascadingAuthenticationState>
+</MudLayout>
+
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> authenticationStateTask { get; set; }
+    bool _drawerOpen = false;
+    private bool _appBarOpen = true;
+    public string RoomName { get; set; }
+    
+    public ClaimsPrincipal User { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        User = (await authenticationStateTask).User;    
+        base.OnInitialized();
+        PlatformStateCacheService.OnChange += OnChanged;
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void AppBarToggle()
+    {
+        _appBarOpen = !_appBarOpen;
+    }
+
+    private void OnChanged()
+    {
+        StateHasChanged();
+    }    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        //object slug = null;
+        // can parse out useful slug data and retain it.
+        object slug = null;
+        if ((this.Body.Target as RouteView)?.RouteData.RouteValues?.TryGetValue("roomName", out slug) == true)
+        {
+            this.RoomName = slug?.ToString();
+        }
+        await base.OnParametersSetAsync();
+    }
+}

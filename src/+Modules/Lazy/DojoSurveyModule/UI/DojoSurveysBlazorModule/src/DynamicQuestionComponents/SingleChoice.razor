@@ -1,0 +1,45 @@
+@inject IStringLocalizer<SingleChoice> Localize
+
+<MudField Label="New Single-Choice Question" Class="mt-4" Variant="Variant.Outlined" DisableUnderLine="true">
+    <MudGrid>
+        <MudItem xs="12" sm="8">
+            <MudTextField @bind-Value="_newQuestion.Title" Label="Question Text" />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudTextField @bind-Value="_newQuestion.Section" Label="Question Section" />
+        </MudItem>
+    </MudGrid>
+</MudField>
+<NewSurveyQuestionAnswer OnSave=SaveAnswer />
+<MudField Label="Possible Answers" Variant="Variant.Outlined" DisableUnderLine="true" Class="mt-4">
+    @foreach(var answer in _newQuestion.DojoSurveyQuestionAnswers)
+    {
+        <MudText>
+            @answer.Content
+        </MudText>
+        <MudDivider />
+    }
+</MudField>
+<MudButton Class="mt-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" FullWidth="true">
+    Add Question
+</MudButton>
+
+@code {
+    [Parameter]
+    public EventCallback<DojoSurveyQuestionViewModel> OnSave { get; set; }
+    private DojoSurveyQuestionViewModel _newQuestion = new() { DojoQuestionType = DojoSurveyQuestionTypesEnum.SingleChoice };   
+
+    private async Task Save()
+    {
+        await OnSave.InvokeAsync(_newQuestion);
+        _newQuestion = new();
+    }
+
+    private void SaveAnswer(DojoSurveyQuestionAnswerViewModel answer)
+    {
+        if(!_newQuestion.DojoSurveyQuestionAnswers.Any(rs=> rs.Content == answer.Content))
+        {
+            _newQuestion.DojoSurveyQuestionAnswers.Add(answer); 
+        }        
+    }
+}

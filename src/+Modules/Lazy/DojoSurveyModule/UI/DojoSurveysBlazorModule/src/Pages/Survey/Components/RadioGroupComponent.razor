@@ -1,0 +1,20 @@
+@inject IStringLocalizer<RadioGroupComponent> Localize
+
+<MudRadioGroup @bind-SelectedOption="@SelectedAnswer">
+    @foreach (var answer in Question.DojoSurveyQuestionAnswers)
+    {
+        <MudRadio Option="@answer.Content">@answer.Content</MudRadio>
+    }
+</MudRadioGroup>
+
+@code {
+    [Parameter]
+    public DojoSurveyQuestionViewModel Question {get;set;}
+    public string SelectedAnswer {get;set;} = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+} 

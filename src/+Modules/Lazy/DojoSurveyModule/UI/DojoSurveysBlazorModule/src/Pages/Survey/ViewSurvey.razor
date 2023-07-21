@@ -1,0 +1,66 @@
+@page "/dojosurveys/viewsurvey/{SurveyId:guid}"
+
+@inject IStringLocalizer<ViewSurvey> Localize
+
+@if(DojoSurvey != null) {
+    <MudContainer>
+        <MudText Typo="Typo.h4">@Localize[@DojoSurvey.Title]</MudText>
+        <MudText Typo="Typo.body1">@Localize[@DojoSurvey.Description]</MudText>
+        <MudContainer Class="mt-4">
+            <MudButton Size="Size.Small" FullWidth="true" Variant="Variant.Outlined" Color="Color.Tertiary" OnClick="() => NavigateToEditDojoSurvey(DojoSurvey.Id.ToString())">Edit Survey</MudButton>
+            <MudPaper Class="pa-4 mt-4">
+                <MudText Typo="Typo.h5" Class="text-center">@Localize["Identifying Information:"]</MudText>
+                <MudTextField Label="Team" @bind-Value="_teamName" />
+                <MudTextField Label="Role" @bind-Value="_role" />
+            </MudPaper>
+        </MudContainer>
+        @foreach (var questionSection in DojoSurvey.DojoSurveyQuestions.GroupBy(q => q.Section ?? "").Select(g => new DojoSurveyQuestionsGroupedBySection(g.Key, g.ToList())))
+        {
+            <MudText Typo="Typo.h4" Class="mt-4">@questionSection.Section</MudText>
+            @foreach (var question in questionSection.DojoSurveyQuestions)
+            {
+                <MudContainer>
+                    <MudPaper Class="pa-4 mt-4">
+                        <MudStack Row="true">
+                            <MudText Typo="Typo.h5" Class="text-center">@Localize[question.Title]</MudText>
+                            @if (question.DojoQuestionType == DojoSurveyQuestionTypesEnum.MultiChoice)
+                            {
+                                <CheckBoxGroupComponent Question=@question />
+                            }
+                            else
+                            {
+                                <RadioGroupComponent Question=@question />
+                            }
+                        </MudStack>
+                    </MudPaper>
+                </MudContainer>
+            }
+        }
+        <MudButton Class="my-4" Size="Size.Small" FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary">Sumbit Survey</MudButton>
+    </MudContainer>
+}
+
+@code {
+    public DojoSurveyViewModel DojoSurvey {get;set;} = null;
+
+    public string _teamName {get;set;} = string.Empty;
+    public string _role {get;set;} = string.Empty;
+    @* public string SelectedAnswer {get;set;} = string.Empty; *@
+    List<DojoSurveyQuestionAnswerViewModel> _selectedAnswerList {get;set;} = new ();
+    
+    [Parameter]
+    public Guid SurveyId { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();                     
+        var request = new DojoSurveyGetByIdRequest(SurveyId);
+        DojoSurvey = await DojoSurveysDataService.DojoSurveyGetByIdAsync(request);
+
+    }
+
+    protected async Task NavigateToEditDojoSurvey(string dojoSurveyId)
+    {
+        NavigationManager.NavigateTo($"/dojoSurveys/editsurvey/{dojoSurveyId}");
+    }
+}

@@ -1,0 +1,6 @@
+# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as base
+WORKDIR /
+COPY ./src/___TMRA.Kernel/ src/___TMRA.Kernel/
+COPY ./src/__TMRA.Core/ src/__TMRA.Core/
+

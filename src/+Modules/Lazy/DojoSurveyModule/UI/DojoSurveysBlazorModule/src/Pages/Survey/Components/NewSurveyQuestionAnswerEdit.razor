@@ -1,0 +1,18 @@
+@inject IStringLocalizer<NewSurveyQuestionAnswerEdit> Localize
+
+<MudGrid Spacing="0" Class="pt-4">    
+    <MudItem xs="12" sm="4" md="6">
+        <MudTextField @bind-Value="EditAnswer.Content" Label="Answer Text" />
+    </MudItem>
+    <MudItem xs="12" sm="4" md="3">
+        <MudTextField @bind-Value="EditAnswer.Value" Label="Value" HelperText="optional" />
+    </MudItem>
+    <MudItem xs="12" sm="4" md="3">
+        <MudTextField @bind-Value="EditAnswer.SortOrder" Label="Sort" HelperText="optional" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public DojoSurveyQuestionAnswerViewModel EditAnswer { get; set; }        
+}

@@ -1,0 +1,81 @@
+@page "/dojosurveys/newsurvey"
+@inject IStringLocalizer<NewSurvey> Localize
+
+<MudContainer>
+    <MudText Typo="Typo.h4" Class="mb-4">Create Survey</MudText>
+    <MudPaper class="pa-4 mb-4">
+        <MudField Label="Survey Info" Variant="Variant.Outlined">
+            <MudTextField @bind-Value="_dojoSurvey.Title" Label="Title" />
+            <MudTextField @bind-Value="_dojoSurvey.Description" Label="Description" />
+        </MudField>
+        @foreach(var question in _dojoSurvey.DojoSurveyQuestions) {
+            @if(_currentlyEdittingQuestionTitle == question.Title) {
+                <EditSurveyQuestion EditQuestion=@question OnClose=CloseQuestionEdit />
+            } else {
+                <MudPaper Class="pa-4 my-2">
+                    <MudList Dense="true">
+                        <MudListSubHeader>
+                            <MudText Color="Color.Primary">Question</MudText>
+                        </MudListSubHeader>
+                        <MudListItem>
+                            <MudButton EndIcon="@Icons.Material.Filled.Edit" aria-label="edit" OnClick="() => SetEditQuestionTitle(question.Title)">
+                                @question.Title
+                            </MudButton>
+                        </MudListItem>
+                        <MudListSubHeader>
+                            <MudText Color="Color.Tertiary">Potential Answers</MudText>
+                        </MudListSubHeader>
+                        @foreach(var answer in question.DojoSurveyQuestionAnswers) {
+                            <MudListItem>@answer.Content</MudListItem>
+                            <MudDivider />
+                        }
+                    </MudList>
+                </MudPaper>
+            }
+        }
+        <MudButton EndIcon="@Icons.Material.Filled.Add" aria-label="add" OnClick=ToggleNewQuestion > Questions </MudButton>    
+        @if(_showNewQuestion == true) {        
+            <NewSurveyQuestion OnSave=NewQuestionCreated />
+        }
+        <MudDivider />
+        <MudButton class="mt-4" Variant="Variant.Filled" Color="Color.Tertiary" OnClick=SaveSurvey FullWidth="true">Save Survey</MudButton>
+    </MudPaper>
+    <FrequencyComponent />
+</MudContainer>
+
+@code {
+    private bool _showNewQuestion = false;
+    private DojoSurveyViewModel _dojoSurvey = new();
+    private string _currentlyEdittingQuestionTitle = "";
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+   
+    private void AddQuestion()
+    {
+        _showNewQuestion = true;
+    }    
+    private void NewQuestionCreated(DojoSurveyQuestionViewModel question) {
+        if(!_dojoSurvey.DojoSurveyQuestions.Any(rs=>rs.Title == question.Title)){
+            _dojoSurvey.DojoSurveyQuestions.Add(question);
+        }
+        _showNewQuestion = false;
+    }
+    private void ToggleNewQuestion() {
+        _showNewQuestion = !_showNewQuestion;
+    }
+    private void SetEditQuestionTitle(string title) {
+        _currentlyEdittingQuestionTitle = title;
+    }
+    private void CloseQuestionEdit() {
+        _currentlyEdittingQuestionTitle = "";
+    }
+    private async Task SaveSurvey() {
+        var request = new DojoSurveyCreateNewRequest(_dojoSurvey);
+        var savedSurvey = await DojoSurveysDataService.DojoSurveyCreateNewAsync(request);
+        if(savedSurvey != null) {
+            NavigationManager.NavigateTo($"/dojosurveys/viewsurvey/{savedSurvey.Id}");
+        }
+    }
+}

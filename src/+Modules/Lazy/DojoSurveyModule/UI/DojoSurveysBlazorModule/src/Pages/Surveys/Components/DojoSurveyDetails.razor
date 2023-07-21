@@ -1,0 +1,47 @@
+@inject IStringLocalizer<DojoSurveyDetails> Localize
+<MudField Label="Survey" Variant="Variant.Outlined" DisableUnderLine="true">
+    @foreach(var dojoSurveyQuestionsGroup in dojoSurveyQuestionsGroupBySections)
+    {
+        @dojoSurveyQuestionsGroup.Section
+        @dojoSurveyQuestionsGroup.DojoSurveyQuestions.First().Id
+        <MudExpansionPanel>
+            <MudExpansionPanelSummary>
+                <MudTypography Variant="TypographyVariant.H6">@dojoSurveyQuestionsGroup.Section</MudTypography>
+            </MudExpansionPanelSummary>
+            <MudExpansionPanelContent>
+                @foreach(DojoSurveyQuestionViewModel question in dojoSurveyQuestionsGroup.DojoSurveyQuestions)
+                {
+                    @dojoSurveyQuestionsGroup.DojoSurveyQuestions.Count()
+                    <MudCard>
+                        <MudCardContent>
+                            <MudTypography Variant="TypographyVariant.H6">@question.Title</MudTypography>
+                            <MudTypography Variant="TypographyVariant.Body1">@question.Description</MudTypography>
+                            <QuestionToAnswer Question=@question />
+
+                            @* <MudTextField @bind-Value="question.Answer" Label="@question.Title" /> *@
+                        </MudCardContent>
+                    </MudCard>
+                }
+            </MudExpansionPanelContent>
+        </MudExpansionPanel>
+    }
+</MudField>
+
+@code {
+    [Parameter]
+    public DojoSurveyViewModel? DojoSurvey { get; set; }
+    public IEnumerable<DojoSurveyQuestionsGroupedBySection> dojoSurveyQuestionsGroupBySections = new List<DojoSurveyQuestionsGroupedBySection>();
+        
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();                     
+        dojoSurveyQuestionsGroupBySections = DojoSurvey.DojoSurveyQuestions.GroupBy(q => q.Section ?? "").Select(g => new DojoSurveyQuestionsGroupedBySection(g.Key, g.ToList()));
+        Console.WriteLine($"Found some: {dojoSurveyQuestionsGroupBySections.Count()}");
+    }
+
+    private void BackToAllDojoSurveys()
+    {
+        NavigationManager.NavigateTo("/dojoSurveys/alldojoSurveys");
+    }
+}

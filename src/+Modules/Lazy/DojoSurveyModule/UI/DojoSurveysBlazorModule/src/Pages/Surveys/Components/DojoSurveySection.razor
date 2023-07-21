@@ -1,0 +1,8 @@
+@inject IStringLocalizer<DojoSurveySection> Localize
+<MudField Label="Section" Variant="Variant.Outlined" DisableUnderLine="true">
+    <div>Section: @Title</div>
+</MudField>
+@code {
+    [Parameter]
+    public string Title {get;set;}
+}

@@ -1,0 +1,18 @@
+@inject IStringLocalizer<CheckBoxGroupComponent> Localize
+
+@foreach (var answer in Question.DojoSurveyQuestionAnswers)
+{
+    <CheckBoxComponent Answer=@answer />
+}
+
+@code {
+    [Parameter]
+    public DojoSurveyQuestionViewModel Question {get;set;}
+    public string SelectedAnswer {get;set;} = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+} 

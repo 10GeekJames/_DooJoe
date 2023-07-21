@@ -1,0 +1,32 @@
+@inherits LayoutComponentBase
+<MudLayout>
+    <MudAppBar Class="animate__fadeInDown" Elevation="0" Fixed="false">
+        <MudText Typo="Typo.h5" Class="ml-3">DojoSurveyModule</MudText>
+        <MudSpacer />
+        <MudMenu Icon="@Icons.Material.Filled.Menu" AnchorOrigin="Origin.BottomLeft" Edge="Edge.End" Color="Color.Inherit" FullWidth="false">
+            <MudMenuItem class="mudmenuitem-custom" OnClick=RedirectToLogin>Sign in</MudMenuItem>
+            <MudMenuItem class="mudmenuitem-custom">Support</MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
+    @Body
+</MudLayout>
+
+
+@code {
+    bool _drawerOpen = true;
+    
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected void RedirectToLogin() {
+        NavigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}");
+    }
+
+    void Testing()
+    {
+        Console.WriteLine("Clicked the ellipses");
+    }
+ 
+}

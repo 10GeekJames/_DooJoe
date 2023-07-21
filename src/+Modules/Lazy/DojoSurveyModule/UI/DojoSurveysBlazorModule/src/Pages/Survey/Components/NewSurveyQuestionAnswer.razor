@@ -1,0 +1,31 @@
+@inject IStringLocalizer<NewSurveyQuestionAnswer> Localize
+
+<MudField Label="Add Answer" Variant="Variant.Outlined" DisableUnderLine="true" Class="mt-4">
+    <MudGrid Class="pl-4 pr-4 pb-4 pt-0">
+        <MudItem xs="12" sm="4" md="6">
+            <MudTextField @bind-Value="_newAnswer.Content" Label="Answer Text"/>
+        </MudItem>
+        <MudItem xs="12" sm="4" md="3">
+            <MudTextField @bind-Value="_newAnswer.Value" Label="Value" HelperText="optional" />
+        </MudItem>
+        <MudItem xs="12" sm="4" md="3">
+            <MudTextField @bind-Value="_newAnswer.SortOrder" Label="Sort" HelperText="optional" />
+        </MudItem>
+        <MudButton Class="align-self-end" Variant="Variant.Filled" Color="Color.Primary" OnClick="Save">
+            Add Answer
+        </MudButton>            
+    </MudGrid>
+</MudField>
+
+@code {
+    [Parameter]
+    public EventCallback<DojoSurveyQuestionAnswerViewModel> OnSave { get; set; }
+    private DojoSurveyQuestionAnswerViewModel _newAnswer { get; set; } = new();    
+    private async Task Save()
+    {
+        if(_newAnswer.Content.Trim() != "") {
+            await OnSave.InvokeAsync(_newAnswer);
+        }
+        _newAnswer = new();
+    }
+}

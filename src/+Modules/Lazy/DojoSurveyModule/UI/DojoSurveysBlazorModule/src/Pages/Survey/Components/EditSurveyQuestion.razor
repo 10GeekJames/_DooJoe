@@ -1,0 +1,28 @@
+@inject IStringLocalizer<EditSurveyQuestion> Localize
+<MudField Label="Edit Question" Class="mt-4" Variant="Variant.Outlined" DisableUnderLine="true">
+    @if(EditQuestion != null && SelectedQuestionType != null) {
+        <DynamicComponent Type=SelectedQuestionType 
+            Parameters=@( new
+                Dictionary<string, object> { 
+                    {"EditQuestion", EditQuestion} } ) />
+    }
+    <MudButton Class="mt-4" Variant="Variant.Filled" Color="Color.Primary" OnClick=OnClose FullWidth="true">
+        Close
+    </MudButton>
+</MudField>
+@code {
+
+    [Parameter] public DojoSurveyQuestionViewModel EditQuestion { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private Type SelectedQuestionType => Type.GetType($"DojoSurveysBlazorModule.DynamicQuestionComponents.{EditQuestion.DojoQuestionType.ToString()}Edit");    
+    private async Task Close() => await OnClose.InvokeAsync(); 
+} 

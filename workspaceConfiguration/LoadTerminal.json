@@ -1,0 +1,150 @@
+{
+    "version": "1.2.1",
+    "groups": [
+        {
+            "name": "DooJoe.Identity",
+            "enabled": true,
+            "terminals": [
+                {
+                    "name": "DooJoe.Identity",
+                    "path": "./src/++Identity/DooJoe.Identity/src/DooJoe.Identity.STS.Identity/",
+                    "cmd": [
+                        "dotnet watch run"
+                    ],
+                    "num": 1
+                },
+                {
+                    "name": "DooJoe.Common",
+                    "path": "./src/_Common/DooJoe.Common/src/",
+                    "cmd": [
+                        "dotnet watch build"
+                    ],
+                    "num": 1
+                }
+            ]            
+        },
+        {
+            "name": "DooJoe.Client.BlazorClient",
+            "enabled": true,
+            "terminals": [
+                {
+                    "name": "DooJoe.Client.BlazorClient",
+                    "path": "./src/UI/Client/DooJoe.BlazorClient/src",
+                    "cmd": [
+                        "dotnet watch run"
+                    ],
+                    "num": 2
+                },
+                {
+                    "name": "DooJoe.BlazorClient.UITests",
+                    "path": "./src/UI/Client/DooJoe.BlazorClient.UITests/src",
+                    "cmd": [
+                        "ping 127.0.0.1 -n 20",
+                        "dotnet test"
+                    ],
+                    "num": 2
+                },
+                {
+                    "name": "DooJoe.BlazorClient.UIUnitTests",
+                    "path": "./src/UI/Client/DooJoe.BlazorClient.UIUnitTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 2
+                }
+            ]
+        },        
+        {
+            "name": "AccountModuleCore",
+            "enabled": true,
+            "terminals": [
+                {
+                    "name": "AccountModuleCore.UnitTests",
+                    "path": "./src/+Modules/Required/AccountModule/____Core/AccountModuleCore.UnitTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 3
+                },
+                {
+                    "name": "AccountModuleInfrastructure.IntegrationTests",
+                    "path": "./src/+Modules/Required/AccountModule/___Infrastructure/AccountModuleInfrastructure.IntegrationTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 3
+                },
+                {
+                    "name": "AccountModuleApplication.FeatureTests",
+                    "path": "./src/+Modules/Required/AccountModule/_Application/AccountModuleApplication.FeatureTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 3
+                },
+                {
+                    "name": "AccountModuleApi.FunctionalTests",
+                    "path": "./src/+Modules/Required/AccountModule/+API/AccountModuleApi.FunctionalTests/src",
+                    "cmd": [
+                        "echo build this"
+                    ],
+                    "num": 3
+                }   ,
+                {
+                    "name": "AccountModuleApi",                      
+                    "path": "./src/+Modules/Required/AccountModule/+API/+AccountModuleApi/src",
+                    "cmd": [
+                        "dotnet watch run"
+                    ],
+                    "num": 3
+                }             
+            ]
+        },
+        {
+            "name": "DojoSurveysCore",
+            "enabled": true,
+            "terminals": [
+                {
+                    "name": "DojoSurveysCore.UnitTests",
+                    "path": "./src/+Modules/Lazy/DojoSurveyModule/____Core/_DojoSurveysCore.UnitTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 5
+                },
+                {
+                    "name": "DojoSurveysInfrastructure.IntegrationTests",
+                    "path": "./src/+Modules/Lazy/DojoSurveyModule/___Infrastructure/DojoSurveysInfrastructure.IntegrationTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 5
+                },
+                {
+                    "name": "DojoSurveysApplication.FeatureTests",
+                    "path": "./src/+Modules/Lazy/DojoSurveyModule/_Application/DojoSurveysApplication.FeatureTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 5
+                },
+                {
+                    "name": "DojoSurveysApi.FunctionalTests",
+                    "path": "./src/+Modules/Lazy/DojoSurveyModule/+Api/DojoSurveysApi.FunctionalTests/src",
+                    "cmd": [
+                        "dotnet test"
+                    ],
+                    "num": 5
+                }   ,
+                {
+                    "name": "DojoSurveysApi",                      
+                    "path": "./src/+Modules/Lazy/DojoSurveyModule/+Api/+DojoSurveysApi/src",
+                    "cmd": [
+                        "dotnet watch run"
+                    ],
+                    "num": 5
+                }             
+            ]
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+@inject IStringLocalizer<SingleChoiceEdit> Localize
+
+@if(EditQuestion != null) {
+    <MudGrid>
+        <MudItem xs="12" sm="4" md="6">
+            <MudTextField @bind-Value="EditQuestion.Title" Label="Question Text" />
+        </MudItem>
+        <MudItem xs="12" sm="4" md="3">
+            <MudTextField @bind-Value="EditQuestion.Section" Label="Question Section" />
+        </MudItem>
+    </MudGrid>
+    <MudField Label="Possible Answers (Single Choice)" Variant="Variant.Outlined" DisableUnderLine="true" Class="mt-8">
+        @foreach(var answer in EditQuestion.DojoSurveyQuestionAnswers)
+        {
+            <div>
+                <NewSurveyQuestionAnswerEdit EditAnswer=answer />
+            </div>
+        }
+    </MudField>
+    <NewSurveyQuestionAnswer OnSave=SaveAnswer />
+}
+
+@code {
+    [Parameter]
+    public DojoSurveyQuestionViewModel EditQuestion { get; set; }
+    
+    private void SaveAnswer(DojoSurveyQuestionAnswerViewModel dojoSurveyQuestionAnswer) {
+        EditQuestion.DojoSurveyQuestionAnswers.Add(dojoSurveyQuestionAnswer);
+    }
+}

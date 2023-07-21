@@ -1,0 +1,19 @@
+@inject IStringLocalizer<QuestionToAnswer> Localize
+<div>
+    @if (Question.DojoQuestionType == DojoSurveyQuestionTypesEnum.MultiChoice)
+    {
+      <MudRadioGroup T="string">
+        @foreach (var questionAnswer in Question.DojoSurveyQuestionAnswers.OrderBy(rs => rs.SortOrder))
+        {
+            <MudRadio Option=@questionAnswer.Id.ToString()>@questionAnswer.Content</MudRadio>
+        }
+      </MudRadioGroup>
+    }
+</div>
+
+    @code {
+
+    [Parameter]
+
+    public DojoSurveyQuestionViewModel Question { get; set; } = null;
+} 

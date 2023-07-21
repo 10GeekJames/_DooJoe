@@ -1,0 +1,21 @@
+@page "/dojosurveys/completesurvey/{SurveyId:guid}"
+
+@inject IStringLocalizer<CompleteSurvey> Localize
+
+<MudContainer>
+    <div> Complete Survey </div>
+</MudContainer>
+
+@code {
+    public DojoSurveyViewModel DojoSurvey {get;set;} = null;
+    
+    [Parameter]
+    public Guid SurveyId { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();                     
+        var request = new DojoSurveyGetByIdRequest(SurveyId);
+        DojoSurvey = await DojoSurveysDataService.DojoSurveyGetByIdAsync(request);
+    }
+}

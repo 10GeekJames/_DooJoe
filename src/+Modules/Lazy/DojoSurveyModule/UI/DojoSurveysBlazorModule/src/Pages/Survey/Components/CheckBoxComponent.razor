@@ -1,0 +1,15 @@
+@inject IStringLocalizer<CheckBoxComponent> Localize
+
+<MudCheckBox Label="@Answer.Content" @bind-Checked="@SelectedAnswer" />
+
+@code {
+    [Parameter]
+    public DojoSurveyQuestionAnswerViewModel Answer {get;set;}
+    public string SelectedAnswer {get;set;} = "false";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+} 

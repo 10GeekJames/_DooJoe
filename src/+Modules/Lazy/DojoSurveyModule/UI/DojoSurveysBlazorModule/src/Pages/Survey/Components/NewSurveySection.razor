@@ -1,0 +1,15 @@
+@inject IStringLocalizer<NewSurveySection> Localize
+<MudField Label="New Section" Variant="Variant.Outlined" DisableUnderLine="true">
+    <MudInput Placeholder="Section Name" @bind-Value=@NewSectionName />
+    <MudButton OnClick=Save>Save</MudButton>
+</MudField>
+@code {
+    [Parameter]
+    public EventCallback<string> OnSave { get; set; }
+    public string NewSectionName { get; set; } = "";    
+    private async Task Save()
+    {
+        await OnSave.InvokeAsync(NewSectionName);
+        NewSectionName="";
+    }
+}

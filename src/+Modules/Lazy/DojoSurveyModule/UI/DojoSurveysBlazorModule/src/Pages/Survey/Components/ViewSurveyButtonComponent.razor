@@ -1,0 +1,19 @@
+@inject IStringLocalizer<ViewSurveyButtonComponent> Localize
+
+<MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => NavigateToViewDojoSurvey(DojoSurveyId.ToString())">View Survey</MudButton>
+
+@code {
+    [Parameter]
+    public Guid DojoSurveyId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected async Task NavigateToViewDojoSurvey(string dojoSurveyId)
+    {
+        NavigationManager.NavigateTo($"/dojosurveys/viewsurvey/{dojoSurveyId}");
+    }
+
+} 

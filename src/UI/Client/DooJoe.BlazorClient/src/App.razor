@@ -1,0 +1,119 @@
+@using System.Reflection
+@using DooJoe.KernelShared
+@inject IStringLocalizer<App> Localize
+
+<MudThemeProvider Theme="_selectedMudTheme" @bind-IsDarkMode="@PlatformStateCacheService.IsDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="@LoadedAssemblies" OnNavigateAsync="@OnNavigateAsync" PreferExactMatches="@true">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    private MudTheme _selectedMudTheme;    
+    public string roomName { get; set; } = String.Empty;
+    public bool hasRunUserInit = false;
+    public bool hasRunAppInit = false;
+    private List<Assembly> LoadedAssemblies = new List<Assembly>();
+    private ClaimsPrincipal user;    
+    private bool isAuthenticated = false;
+    private bool showSplash = true;
+    protected override async Task OnInitializedAsync()
+    {
+        PlatformCacheService.SetAppDataToReady();        
+        
+        var authstate = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authstate.User;
+        isAuthenticated = (user?.Identity?.IsAuthenticated == true);        
+        _selectedMudTheme = MudStaticDefaultTheme.Default;
+        
+        PlatformStateCacheService.OnChange += OnChanged;        
+    }
+
+    private void OnChanged()
+    {
+        StateHasChanged();
+    } 
+
+    private async Task GetAppData()
+    {
+        await PlatformCacheService.InitAppDataAsync(isAuthenticated);
+        while (!PlatformCacheService.AppDataIsReady)
+        {
+            Console.WriteLine("GetAppData Waiting on AppData is Ready");
+            await Task.Delay(100);
+        }
+    }
+
+    private async Task OnNavigateAsync(NavigationContext navContext)
+    {
+        Console.WriteLine("OnNavAsync");
+
+        while (!PlatformCacheService.AppDataIsReady)
+        {
+            Console.WriteLine("OnNavigateAsync Waiting on AppData is Ready");
+            await Task.Delay(100);
+        }
+        
+        var uriAsUri = new Uri(NavigationManager.Uri);
+
+        var subwebPrefixCount = uriAsUri.Host.Count(rs => rs == '.');
+
+        Console.WriteLine($"Uri Path: {uriAsUri}, {uriAsUri.Segments.Count()}");
+
+        if (uriAsUri.Segments.Count() > 3)
+        {
+            this.roomName = uriAsUri.Segments[2].Substring(0, uriAsUri.Segments[2].Length - 1);
+        }
+        else
+        {
+            this.roomName = "";
+        }
+
+        var uriPath = NavigationManager.Uri.ToLower();
+
+        if (!uriPath.Contains("localhost"))
+        {
+
+        }
+
+        var preLoadAssemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>() { "AccountModuleBlazorModuleAdmin.dll" });
+        LoadedAssemblies.AddRange(preLoadAssemblies);
+
+        // AccountModule
+        if (uriPath.Contains("account/"))
+        {
+            // pre loaded
+        }        
+        // \AccountModule
+        
+        // DojoSurveyModule
+        if (uriPath.Contains("dojosurveys/"))
+        {
+            var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string> { "DojoSurveysBlazorModule.dll" });
+            LoadedAssemblies.AddRange(assemblies);
+        }
+        else if (uriPath.Contains("dojosurveysa/"))
+        {
+            var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string> { "DojoSurveysBlazorModuleAdmin.dll" });
+            LoadedAssemblies.AddRange(assemblies);
+        }
+        // \DojoSurveyModule
+    }
+    
+
+}

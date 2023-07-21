@@ -1,0 +1,28 @@
+@inject IStringLocalizer<NewSurveyQuestion> Localize
+<MudField Label="New Question" Variant="Variant.Outlined" DisableUnderLine="true">
+    <MudSelect @bind-Value="_questionType" Label="QuestionType" Variant="Variant.Outlined">
+        @foreach(var item in Enum.GetValues(typeof(DojoSurveyQuestionTypesEnum)))
+        {
+            <MudSelectItem Value=@item.ToString() />
+        }           
+    </MudSelect>
+    @if(_questionType != "") {
+        <DynamicComponent Type=SelectedQuestionType Parameters=_dynamicQuestionParameters />
+    }    
+</MudField>
+@code {
+    [Parameter]
+    public EventCallback<DojoSurveyQuestionViewModel> OnSave { get; set; }
+    private Dictionary<string, object> _dynamicQuestionParameters = new();
+    private string _questionType { get; set; } = "";
+    private Type SelectedQuestionType => Type.GetType($"DojoSurveysBlazorModule.DynamicQuestionComponents.{_questionType}");
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _dynamicQuestionParameters.Add("OnSave", EventCallback.Factory.Create<DojoSurveyQuestionViewModel>(this, Save));        
+    }
+    private async Task Save(DojoSurveyQuestionViewModel question)
+    {
+        await OnSave.InvokeAsync(question);
+    } 
+}
